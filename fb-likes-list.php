@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Facebook Likes List
-Plugin URI: http://andrewnorcross.com/plugins/
+Plugin URI: http://andrewnorcross.com/plugins/fb-likes-list/
 Description: Retrieves and stored Facebook like counts and lists popular
-Version: 1.0
+Version: 1.0.1
 Author: Andrew Norcross
 Author URI: http://andrewnorcross.com
 
-	Copyright 2012 Andrew Norcross
+	Copyright 2013 Andrew Norcross
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -33,7 +33,7 @@ class FB_Likes_List
 	 * @return FB_Likes_List
 	 */
 	public function __construct() {
-		add_action		( 'wp', 						array( $this, 'grab_count'		) 			);
+		add_action		( 'wp', 		array( $this, 'grab_count'		) 			);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class FB_Likes_List
 		global $post;
 
 		$fb_check	= get_permalink( $post->ID );
-		$fb_call	= 'https://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url=%27'.$fb_check.'%27';
+		$fb_call	= 'https://graph.facebook.com/fql?q=SELECT%20like_count%20FROM%20link_stat%20WHERE%20url=%27'.urlencode($fb_check).'%27';
 
 		$response	= wp_remote_get( $fb_call, $args );
 
@@ -100,10 +100,12 @@ class fb_like_list_widget extends WP_Widget {
 		$title = empty($instance['title']) ? '' : apply_filters('widget_title', $instance['title']);
 		if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
 
-			$fbposts = new WP_Query( array (
+			$args = array(
+				'fields'			=> 'ids',
 				'post_type'			=> 'post',
-				'posts_per_page'	=> $instance['count'],
+				'posts_per_page'	=> 5,
 				'order'				=> 'DESC',
+				'meta_key'			=> '_fb_like',
 				'orderby'			=> 'meta_value_num',
 				'no_found_rows'		=> true,
 				'post_status'		=> 'publish',
@@ -115,22 +117,21 @@ class fb_like_list_widget extends WP_Widget {
 						'compare'	=> '>'
 					)
 				)
-			));
-			if ($fbposts->have_posts()) :
+			);
+			$fbposts = get_posts($args);
+
+			if ($fbposts) :
 			echo '<ul>';
-			while ($fbposts->have_posts()) : $fbposts->the_post();
+			foreach ($fbposts as $fbpost) :
 			// begin single items
-				// get variables
-				global $post;
-				$link		= get_permalink($post->ID);
-				$title		= get_the_title($post->ID);
+				$link		= get_permalink($fbpost);
+				$title		= get_the_title($fbpost);
 
 			echo '<li><a href="'.$link.'">'.$title.'</a></li>';
 			// end each item
-			endwhile;
+			endforeach;
 			echo '</ul>';
 			endif;
-			echo wp_reset_query();
 
 		echo $after_widget;
 		?>

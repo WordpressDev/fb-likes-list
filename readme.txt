@@ -1,15 +1,15 @@
 === FB Likes List ===
 Contributors: norcross
-Website Link: http://andrewnorcross.com/plugins/
+Website Link: http://andrewnorcross.com/plugins/fb-likes-list/
 Donate link: https://andrewnorcross.com/donate
-Tags: facebook
-Requires at least: 3.0
+Tags: facebook, facebook like, popular posts, facebook widget
+Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Displays posts based on Facebook 'like' count
+Displays posts based on Facebook 'like' count in widget
 
 == Description ==
 
@@ -28,14 +28,17 @@ This section describes how to install the plugin and get it working.
 
 = I have posts with a lot of likes that aren't showing =
 
-The post doesn't get a count until it's been loaded on the front-end of the site.
+The post doesn't get a count until it's been loaded on the front-end of the site. Trying to get a mass amount of posts at once could break a site.
 
 == Screenshots ==
 
-1. TBD
+1. The widget
 
 
 == Changelog ==
+
+= 1.0.1 =
+* Fixed widget query logic
 
 = 1.0 =
 * First release!
